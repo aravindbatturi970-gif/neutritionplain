@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NutriPlan — Diet Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ===== Sidebar ===== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <span class="logo-icon">🥗</span>
+      <span class="logo-text">NutriPlan</span>
+    </div>
+    <button class="sidebar-close icon-btn" id="sidebarClose" aria-label="Close sidebar">✕</button>
+  </div>
+
+  <div class="sidebar-search">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="globalSearch" placeholder="Search foods & recipes…" autocomplete="off">
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <h3 class="nav-section-title">Menu</h3>
+      <ul class="nav-list">
+        <li><a href="#" class="nav-item active" data-view="dashboard"><span>🏠</span> Dashboard</a></li>
+        <li><a href="#" class="nav-item" data-view="plan"><span>📅</span> My Plan</a></li>
+        <li><a href="#" class="nav-item" data-view="track"><span>✏️</span> Track</a></li>
+        <li><a href="#" class="nav-item" data-view="recipes"><span>🍲</span> Recipes</a></li>
+        <li><a href="#" class="nav-item" data-view="grocery"><span>🛒</span> Grocery</a></li>
+        <li><a href="#" class="nav-item" data-view="progress"><span>📈</span> Progress</a></li>
+        <li><a href="#" class="nav-item" data-view="analysis"><span>🧮</span> Month-End Analysis</a></li>
+        <li><a href="#" class="nav-item" data-view="calendar"><span>🗓️</span> Calendar</a></li>
+        <li><a href="#" class="nav-item" data-view="assistant"><span>🤖</span> AI Assistant</a></li>
+        <li><a href="#" class="nav-item" data-view="profile"><span>👤</span> Profile</a></li>
+        <li><a href="#" class="nav-item" data-view="settings"><span>⚙️</span> Settings</a></li>
+      </ul>
+    </div>
+    <div class="nav-section">
+      <h3 class="nav-section-title">Professional</h3>
+      <ul class="nav-list">
+        <li><a href="#" class="nav-item" data-view="professional"><span>🩺</span> Professional Portal</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="stats-mini">
+      <div class="stat-item"><span class="stat-number" id="statAdherence">–</span><span class="stat-label">Adherence</span></div>
+      <div class="stat-item"><span class="stat-number" id="statStreak">0</span><span class="stat-label">Day streak</span></div>
+    </div>
+    <p class="sidebar-disclaimer">NutriPlan is a planning tool, not medical advice.</p>
+  </div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ===== Main ===== -->
+<div class="main-wrapper">
+  <header class="header">
+    <button class="menu-toggle icon-btn" id="menuToggle" aria-label="Open menu">☰</button>
+    <div class="header-content">
+      <h1 class="header-title" id="headerTitle">Dashboard</h1>
+      <p class="header-subtitle" id="headerSubtitle"></p>
+    </div>
+    <div class="header-actions">
+      <div class="water-chip" id="waterChip" title="Today's water">💧 <span id="waterChipVal">0 ml</span></div>
+      <button class="icon-btn theme-toggle" id="themeToggle" aria-label="Toggle dark / light mode">🌙</button>
+    </div>
+  </header>
+
+  <main class="main-content" id="mainContent">
+
+    <!-- ===== Dashboard ===== -->
+    <section class="view" id="view-dashboard">
+      <div class="dash-grid">
+        <div class="card primary-card">
+          <div class="card-label">Next meal</div>
+          <h2 class="next-meal-name" id="nextMealName">—</h2>
+          <p class="next-meal-meta" id="nextMealMeta"></p>
+          <div class="row gap">
+            <button class="btn primary" id="quickLogBtn">✓ Log meal</button>
+            <button class="btn ghost" data-nav="plan">Replace meal</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-label">Hydration</div>
+          <div class="water-row">
+            <div class="progress-ring" id="waterRing"><svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="52"/><circle class="ring-fg" id="waterRingFg" cx="60" cy="60" r="52"/></svg><span class="ring-label" id="waterPct">0%</span></div>
+            <div class="water-info">
+              <p id="waterSummary">0 of 2000 ml</p>
+              <div class="row gap wrap">
+                <button class="btn small" data-water="250">+250 ml</button>
+                <button class="btn small" data-water="500">+500 ml</button>
+                <button class="btn small ghost" id="undoWater">Undo</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-label">Today's completion</div>
+          <div class="big-pct" id="dayCompletion">0%</div>
+          <div class="bar"><div class="bar-fill" id="dayCompletionBar"></div></div>
+          <p class="muted small-text" id="dayCompletionText">No meals logged yet</p>
+        </div>
+        <div class="card">
+          <div class="card-label">This week</div>
+          <div class="mini-week" id="miniWeek"></div>
+          <p class="muted small-text">Adherence over the last 7 days</p>
+        </div>
+      </div>
+      <h3 class="section-title">Today's meals</h3>
+      <div class="meal-grid" id="todayMeals"></div>
+      <div class="row gap wrap" style="margin-top:0.9rem;">
+        <button class="btn" data-nav="grocery">🛒 Grocery list</button>
+        <button class="btn" data-nav="track">✏️ Log food</button>
+        <button class="btn" data-water="250">💧 Add water</button>
+        <button class="btn" data-nav="recipes">🍲 Find recipes</button>
+        <button class="btn" data-nav="analysis">🧮 Month-end analysis</button>
+      </div>
+    </section>
+
+    <!-- ===== My Plan ===== -->
+    <section class="view" id="view-plan" hidden>
+      <div class="toolbar">
+        <div class="seg" id="planModeSeg">
+          <button class="seg-btn active" data-mode="day">Day</button>
+          <button class="seg-btn" data-mode="week">Week</button>
+        </div>
+        <div class="row gap">
+          <button class="btn ghost" id="planPrev">← Prev</button>
+          <button class="btn ghost" id="planToday">Today</button>
+          <button class="btn ghost" id="planNext">Next →</button>
+        </div>
+        <button class="btn primary" id="generatePlanBtn">✨ Generate plan</button>
+      </div>
+      <div id="planContainer"></div>
+    </section>
+
+    <!-- ===== Track ===== -->
+    <section class="view" id="view-track" hidden>
+      <div class="card">
+        <div class="card-label">Log today's meals</div>
+        <div id="trackMeals" class="track-list"></div>
+      </div>
+      <div class="card">
+        <div class="card-label">Notes for today</div>
+        <textarea id="dayNotes" class="input" rows="3" placeholder="How did today go?"></textarea>
+        <button class="btn primary" id="saveNotes">Save notes</button>
+      </div>
+      <div class="card">
+        <div class="card-label">Optional weight log</div>
+        <div class="row gap wrap">
+          <input type="number" id="weightInput" class="input small-input" step="0.1" min="20" max="400" placeholder="kg">
+          <button class="btn primary" id="logWeight">Log weight</button>
+        </div>
+        <p class="muted small-text">Weight logging is optional and used only for your own trend view.</p>
+      </div>
+    </section>
+
+    <!-- ===== Recipes ===== -->
+    <section class="view" id="view-recipes" hidden>
+      <div class="toolbar wrap">
+        <div class="search-box grow">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="recipeSearch" placeholder="Search recipes or ingredients…">
+        </div>
+        <select id="recipeCuisine" class="input select"></select>
+        <select id="recipeDiet" class="input select"></select>
+        <label class="check"><input type="checkbox" id="recipeSafeOnly" checked> Hide recipes conflicting with my allergies</label>
+      </div>
+      <div class="recipe-grid" id="recipeGrid"></div>
+    </section>
+
+    <!-- ===== Grocery ===== -->
+    <section class="view" id="view-grocery" hidden>
+      <div class="toolbar">
+        <button class="btn primary" id="genGroceryBtn">Generate from this week's plan</button>
+        <button class="btn ghost" id="clearCheckedBtn">Clear checked</button>
+        <button class="btn ghost" id="printGroceryBtn">🖨️ Print</button>
+      </div>
+      <div class="card">
+        <div class="row gap">
+          <input type="text" id="customItem" class="input grow" placeholder="Add custom item…">
+          <select id="customCategory" class="input select"></select>
+          <button class="btn primary" id="addCustomItem">Add</button>
+        </div>
+      </div>
+      <div id="groceryContainer"></div>
+    </section>
+
+    <!-- ===== Progress ===== -->
+    <section class="view" id="view-progress" hidden>
+      <div class="stat-cards" id="progressStats"></div>
+      <div class="analysis-two">
+        <div class="card">
+          <div class="card-label">Meal adherence — last 30 days</div>
+          <div class="hchart" id="adherenceChart"></div>
+        </div>
+        <div class="card">
+          <div class="card-label">Water — last 14 days (ml)</div>
+          <div class="vchart" id="waterChart"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Weight trend</div>
+        <div id="weightTrend" class="muted">No weight entries yet. Add one from the Track view.</div>
+      </div>
+    </section>
+
+    <!-- ===== Month-End Analysis ===== -->
+    <section class="view" id="view-analysis" hidden>
+      <div class="toolbar wrap">
+        <label class="check-inline">Month
+          <select id="analysisMonth" class="input select"></select>
+        </label>
+        <button class="btn primary" id="runAnalysis">Analyze month</button>
+        <button class="btn ghost" id="exportAnalysis">⬇ Export report (.txt)</button>
+      </div>
+      <div id="analysisContainer">
+        <div class="empty-state">Pick a month and run the analysis to see your month-end summary.</div>
+      </div>
+    </section>
+
+    <!-- ===== Calendar ===== -->
+    <section class="view" id="view-calendar" hidden>
+      <div class="toolbar">
+        <button class="btn ghost" id="calPrev">← Prev</button>
+        <h3 class="cal-title" id="calTitle"></h3>
+        <button class="btn ghost" id="calNext">Next →</button>
+      </div>
+      <div class="cal-weekdays" id="calWeekdays"></div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-legend">
+        <span><i class="dot done"></i> Completed</span>
+        <span><i class="dot partial"></i> Partial</span>
+        <span><i class="dot skipped"></i> Skipped</span>
+        <span><i class="dot planned"></i> Planned</span>
+      </div>
+    </section>
+
+    <!-- ===== AI Assistant ===== -->
+    <section class="view" id="view-assistant" hidden>
+      <div class="card chat-card">
+        <div id="chatLog" class="chat-log"></div>
+        <div class="chat-suggestions" id="chatSuggestions"></div>
+        <div class="chat-input-row">
+          <input type="text" id="chatInput" class="input grow" placeholder="Ask about recipes, substitutions or your plan…">
+          <button class="btn primary" id="chatSend">Send</button>
+        </div>
+      </div>
+      <p class="muted small-text">The assistant plans and suggests only — it never gives medical advice or overrides your stored allergies.</p>
+    </section>
+
+    <!-- ===== Profile ===== -->
+    <section class="view" id="view-profile" hidden>
+      <form id="profileForm" class="card form-card">
+        <div class="card-label">Personal details</div>
+        <div class="form-grid">
+          <label>Name <input class="input" name="name" required></label>
+          <label>Age <input class="input" type="number" name="age" min="10" max="120" required></label>
+          <label>Height (cm) <input class="input" type="number" name="height" min="80" max="250"></label>
+          <label>Weight (kg) <input class="input" type="number" name="weight" step="0.1" min="20" max="400"></label>
+        </div>
+        <div class="card-label">Food preference</div>
+        <select class="input" name="diet">
+          <option>Vegetarian</option><option>Vegan</option><option>Eggetarian</option>
+          <option>Pescatarian</option><option>Jain</option><option>Gluten-free</option>
+          <option>Lactose-free</option><option>No preference</option>
+        </select>
+        <div class="card-label">Allergies <span class="danger-text">— please keep accurate!</span></div>
+        <div class="chip-grid" id="profileAllergies"></div>
+        <div class="row gap wrap">
+          <input class="input grow" id="customAllergy" placeholder="Custom allergy…">
+          <button type="button" class="btn ghost" id="addAllergy">Add</button>
+        </div>
+        <div class="card-label">Dislikes</div>
+        <input class="input" name="dislikes" placeholder="Comma separated, e.g. mushrooms, cilantro">
+        <div class="card-label">Water goal (ml/day)</div>
+        <input class="input" type="number" name="waterGoal" min="1000" max="6000" step="100" value="2000">
+        <div class="card-label">Clinician instructions <span class="muted small-text">(optional)</span></div>
+        <textarea class="input" name="clinicianNotes" rows="2" placeholder="Restrictions or instructions provided by your clinician"></textarea>
+        <div class="row gap">
+          <button class="btn primary" type="submit">Save profile</button>
+          <button class="btn ghost danger" type="button" id="resetAll">Reset all data</button>
+        </div>
+        <p class="muted small-text">This app is a planning tool and does not provide medical advice.</p>
+      </form>
+    </section>
+
+    <!-- ===== Settings ===== -->
+    <section class="view" id="view-settings" hidden>
+      <div class="analysis-two">
+        <div class="card">
+          <div class="card-label">Appearance</div>
+          <div class="row gap">
+            <button class="btn ghost" id="setLight">☀️ Light</button>
+            <button class="btn ghost" id="setDark">🌙 Dark</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-label">Notifications (local reminders)</div>
+          <label class="check"><input type="checkbox" id="notifMeals" checked> Meal reminders</label>
+          <label class="check"><input type="checkbox" id="notifWater" checked> Water reminders</label>
+          <p class="muted small-text">Reminders appear as gentle in-app toasts while NutriPlan is open.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Privacy</div>
+        <p class="muted small-text">All data lives only in this browser (localStorage). Nothing is uploaded.</p>
+        <div class="row gap">
+          <button class="btn ghost" id="exportData">⬇ Export my data (JSON)</button>
+          <button class="btn ghost danger" id="deleteAll">🗑 Delete all data</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Professional Portal ===== -->
+    <section class="view" id="view-professional" hidden>
+      <div class="card">
+        <div class="card-label">Connect a dietitian (demo)</div>
+        <p class="muted small-text">In production, a dietitian invites you. Here you can simulate a connection and plan approval workflow.</p>
+        <div class="row gap wrap">
+          <input class="input grow" id="proName" placeholder="Professional name, e.g. Dr. Meera (RD)">
+          <button class="btn primary" id="connectPro">Request connection</button>
+        </div>
+        <div id="proStatus"></div>
+      </div>
+      <div class="card">
+        <div class="card-label">Plan review queue</div>
+        <div id="reviewQueue"></div>
+      </div>
+    </section>
+
+    <!-- ===== Onboarding ===== -->
+    <div class="modal-overlay" id="onboardingOverlay" hidden>
+      <div class="modal onboarding">
+        <div class="ob-progress"><div class="bar"><div class="bar-fill" id="obBar"></div></div><span id="obStepLabel" class="muted small-text"></span></div>
+        <div id="obBody"></div>
+        <div class="row gap ob-nav">
+          <button class="btn ghost" id="obBack" type="button">← Back</button>
+          <button class="btn primary" id="obNext" type="button">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Recipe detail modal ===== -->
+    <div class="modal-overlay" id="recipeOverlay" hidden>
+      <div class="modal" id="recipeModal">
+        <button class="modal-close icon-btn" id="recipeModalClose" aria-label="Close">✕</button>
+        <div id="recipeModalBody"></div>
+      </div>
+    </div>
+
+    <div id="toastHost" class="toast-host" aria-live="polite"></div>
+  </main>
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
